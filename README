@@ -1,0 +1,68 @@
+passwords - an embarrasingly simple password safe
+
+Highlights:
+  - Functional: stores all your passwords in a single, encrypted file
+  - Secure: 256-bit AES encryption
+  - Verifiable: less than 300 lines of Scala code
+  - Durable: backup ~/.passwords with Dropbox, or email, or whatever
+  - Free: MIT license
+
+The goal of this program is to be moderately more user friendly than storing
+passwords in a plain text file encrypted with GnuPG, while at the same time
+being short and simple enough that any competent programer can convince
+themselves of its correctness in under 30 minutes. 
+
+Example usage:
+
+  $ passwords 
+  Usage:
+    passwords <command> [<args>]
+  Commands:
+    generate [length]
+    add <url> <username>
+    remove <url> <username>
+    search <search string>
+
+  $ passwords generate
+  g9mYO:=[
+
+  $ passwords add https://www.mint.com/ johndoe
+  No existing passwords database.
+  Enter a master password: 
+  Confirm master password: 
+  Password: <copy/paste "g9mYO:=[" from above>
+
+  $ passwords search mint
+  Master password: 
+  https://www.mint.com/ johndoe g9mYO:=[
+
+  $ passwords remove https://www.mint.com/ johndoe
+  Master password: 
+  Really remove this entry? (Y/N): y
+
+Installation instructions for Mac/Unix:
+
+  1. Download and install Scala:
+  
+     cd ~/Downloads
+     wget 'http://www.scala-lang.org/downloads/distrib/files/scala-2.9.2.tgz'
+     cd /usr/local
+     sudo tar xzvf ~/Downloads/scala-2.9.2.tgz
+     sudo chmod a+x scala-2.9.2/bin/scala
+     cd bin
+     sudo ln -s ../scala-2.9.2/bin/scala
+
+  2. Download and install this passwords:
+
+     cd ~/Downloads
+     wget 'https://github.com/srhea/passwords/blob/master/passwords'
+     chmod a+x passwords
+     sudo cp passwords /usr/local/bin
+
+Note:
+
+I wrote passwords in Scala because of the languages I know well, Scala
+produces shorter, more readable code than C++, and I trust Scala's
+cryptographic primitives more than those in Ruby.
+
+Enjoy!
