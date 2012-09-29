@@ -1,4 +1,4 @@
-import java.io.{ DataInputStream, DataOutputStream, FileInputStream, FileOutputStream }
+import java.io.{ DataInputStream, DataOutputStream, File, FileInputStream, FileOutputStream }
 import java.security.SecureRandom
 import javax.crypto.{ Cipher, SecretKeyFactory }
 import javax.crypto.spec.{ IvParameterSpec, PBEKeySpec, SecretKeySpec }
@@ -23,14 +23,14 @@ class Vault(password: Array[Char], salt: Array[Byte]) {
   }
 }
 
-class VaultFile(filename: String, password: Array[Char]) {
+class VaultFile(file: File, password: Array[Char]) {
   val FileVersion = 1
 
   // Cribbed from Beginning Scala by David Pollack, pp. 109-112.
   def using[A <: {def close(): Unit}, B](a: A)(f: A => B): B = try { f(a) } finally { a.close() }
 
   def read: Array[Byte] = {
-    using(new DataInputStream(new FileInputStream(filename))) { is =>
+    using(new DataInputStream(new FileInputStream(file))) { is =>
       def readBytes() = {
         val length = is.readInt()
         val result = new Array[Byte](length)
@@ -49,7 +49,7 @@ class VaultFile(filename: String, password: Array[Char]) {
   }
 
   def write(plaintext: Array[Byte]) {
-    using(new DataOutputStream(new FileOutputStream(filename))) { os =>
+    using(new DataOutputStream(new FileOutputStream(file))) { os =>
       def writeBytes(bytes: Array[Byte]) {
         os.writeInt(bytes.length)
         os.write(bytes, 0, bytes.length)
