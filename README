@@ -1,4 +1,4 @@
-passwords - an embarrasingly simple password safe
+passwords - an embarrassingly simple password safe
 
 Highlights:
   - Functional: stores all your passwords in a single, encrypted file
@@ -9,7 +9,7 @@ Highlights:
 
 The goal of this program is to be moderately more user friendly than storing
 passwords in a plain text file encrypted with GnuPG, while at the same time
-being short and simple enough that any competent programer can convince
+being short and simple enough that any competent programmer can convince
 themselves of its correctness in under 30 minutes. 
 
 Example usage:
