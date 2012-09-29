@@ -25,6 +25,7 @@ class Vault(password: Array[Char], salt: Array[Byte]) {
 
 class VaultFile(file: File, password: Array[Char]) {
   val FileVersion = 1
+  val InfoString = "https://github.com/srhea/passwords"
 
   // Cribbed from Beginning Scala by David Pollack, pp. 109-112.
   def using[A <: {def close(): Unit}, B](a: A)(f: A => B): B = try { f(a) } finally { a.close() }
@@ -40,6 +41,7 @@ class VaultFile(file: File, password: Array[Char]) {
       val version = is.readInt()
       if (version != FileVersion)
         throw new Exception("unknown file version: " + version)
+      val infoString = readBytes()
       val salt = readBytes()
       val iv = readBytes()
       val ciphertext = readBytes()
@@ -60,6 +62,7 @@ class VaultFile(file: File, password: Array[Char]) {
       val vault = new Vault(password, salt)
       val (iv, ciphertext) = vault.encrypt(plaintext)
       os.writeInt(FileVersion)
+      writeBytes(InfoString.getBytes("US-ASCII"))
       writeBytes(salt)
       writeBytes(iv)
       writeBytes(ciphertext)
