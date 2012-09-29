@@ -1,3 +1,7 @@
+#!/bin/sh
+exec scala "$0" "$@"
+!#
+
 import java.io.{ DataInputStream, DataOutputStream, File, FileInputStream, FileOutputStream }
 import java.security.SecureRandom
 import javax.crypto.{ Cipher, SecretKeyFactory }
@@ -88,16 +92,35 @@ object Password {
     }
     throw new Exception("failed to find a good password")
   }
+}
 
-  def main(args: Array[String]) {
-    var length = 8
-    if (args.length > 0) {
-      length = Integer.parseInt(args(0))
-      if (args.length > 1 || length < 4) {
-        println("usage: password <length>")
-        sys.exit(1)
-      }
-    }
-    println(generate(length))
-  }
+def usage() {
+  println("""|Usage:
+             |  passwords one-time [length]
+             |  passwords read
+             |  passwords write""".stripMargin)
+  sys.exit(1)
+}
+
+val DefaultFile = new File(System.getProperty("user.home"), ".passwords")
+
+if (args.length == 0)
+  usage()
+
+args.head match {
+  case "one-time" =>
+    val length = if (args.length > 1) Integer.parseInt(args(1)) else 8
+    if (length < 4)
+      sys.error("length must be at least 4")
+    println(Password.generate(length))
+  case "read" =>
+    val password = System.console.readPassword("Password: ")
+    val vf = new VaultFile(DefaultFile, password)
+    println(new String(vf.read, "UTF-8"))
+  case "write" =>
+    val password = System.console.readPassword("Password: ")
+    val plaintext = System.console.readLine("Message: ")
+    val vf = new VaultFile(DefaultFile, password)
+    vf.write(plaintext.getBytes("UTF-8"))
+  case _ => usage()
 }
