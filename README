@@ -1,6 +1,7 @@
 passwords - an embarrassingly simple password safe
 
 Highlights:
+
   - Functional: stores all your passwords in a single, encrypted file
   - Secure: 256-bit AES encryption
   - Verifiable: less than 300 lines of Scala code
@@ -55,7 +56,7 @@ Installation instructions for Mac/Unix:
   2. Download and install this passwords:
 
      cd ~/Downloads
-     wget 'https://github.com/srhea/passwords/blob/master/passwords'
+     wget 'https://raw.github.com/srhea/passwords/master/passwords'
      chmod a+x passwords
      sudo cp passwords /usr/local/bin
 
