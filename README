@@ -24,6 +24,7 @@ Example usage:
     remove <url> <username>
     list
     search <search string>
+    merge <other file>
 
   $ passwords generate
   g9mYO:=[
