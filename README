@@ -22,6 +22,7 @@ Example usage:
     generate [length]
     add <url> <username>
     remove <url> <username>
+    list
     search <search string>
 
   $ passwords generate
