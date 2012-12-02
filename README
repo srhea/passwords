@@ -43,24 +43,21 @@ Example usage:
   Master password: 
   Really remove this entry? (Y/N): y
 
-Installation instructions for Mac/Unix:
+Installation instructions for MacPorts/Debian/Ubuntu:
 
-  1. Download and install Scala:
+  1. Download and install git and sbt:
+
+     apt-get install git sbt   # Debian/Ubuntu
+     port install git sbt      # MacPorts
   
-     cd ~/Downloads
-     wget 'http://www.scala-lang.org/downloads/distrib/files/scala-2.9.2.tgz'
-     cd /usr/local
-     sudo tar xzvf ~/Downloads/scala-2.9.2.tgz
-     sudo chmod a+x scala-2.9.2/bin/scala
-     cd bin
-     sudo ln -s ../scala-2.9.2/bin/scala
+  2. Download and install this script:
 
-  2. Download and install this passwords:
-
-     cd ~/Downloads
-     wget 'https://raw.github.com/srhea/passwords/master/passwords'
-     chmod a+x passwords
-     sudo cp passwords /usr/local/bin
+     mkdir -p ~/src
+     cd ~/src
+     git clone git://github.com/srhea/passwords.git
+     cd passwords
+     sbt compile
+     export PATH=$PATH:$HOME/src/passwords/bin
 
 Note:
 
