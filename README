@@ -43,6 +43,9 @@ Example usage:
   Master password: 
   Really remove this entry? (Y/N): y
 
+If you run passwords without any arguments, it will accept commands in a loop,
+and you will only have to type your master password once per session.
+
 Installation instructions for MacPorts/Debian/Ubuntu:
 
   1. Download and install git and sbt:

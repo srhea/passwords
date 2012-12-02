@@ -151,6 +151,10 @@ class Vault(file: File, val password: Array[Char]) {
 }
 
 object Passwords {
+
+  val file = new File(System.getProperty("user.home"), ".passwords")
+  lazy val masterPassword = System.console.readPassword("Master password: ")
+
   def generate(length: Int): String = {
     val Lowers = "abcdefghijklmnopqrstuvwxyz"
     val Uppers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -169,17 +173,21 @@ object Passwords {
     sys.exit(1)
   }
 
+  var oneShot = false
   def usage() {
-    println("""|Usage:
-               |  passwords <command> [<args>]
-               |Commands:
+    if (oneShot) {
+      println("""|Usage:
+                 |  passwords <command> [<args>]""".stripMargin)
+    }
+    println("""|Commands:
                |  generate [length]
                |  add <url> <username>
                |  remove <url> <username>
                |  list
                |  search <search string>
                |  merge <other file>""".stripMargin)
-    sys.exit(1)
+    if (oneShot)
+      sys.exit(1)
   }
 
   def confirm(msg: String) {
@@ -195,7 +203,6 @@ object Passwords {
       bak.renameTo(file)
     }
     if (file.exists) {
-      val masterPassword = System.console.readPassword("Master password: ")
       val vault = new Vault(file, masterPassword)
       val db = try { vault.read } catch {
         case e: Exception => println("Password incorrect."); sys.exit(1)
@@ -218,13 +225,12 @@ object Passwords {
     }
   }
 
-  def main(args: Array[String]) {
+  def runOneCommand(args: Array[String]) {
     if (args.length == 0)
       usage()
-
-    val file = new File(System.getProperty("user.home"), ".passwords")
-
     args.head match {
+      case "exit" | "quit" =>
+        sys.exit(0)
       case "generate" =>
         val length = if (args.length > 1) Integer.parseInt(args(1)) else 8
         if (length < 4) {
@@ -292,6 +298,17 @@ object Passwords {
         }
         vault.write(onlyInDb ++ onlyInOtherDb ++ inBoth)
       case _ => usage()
+    }
+  }
+
+  def main(args: Array[String]) {
+    if (!args.isEmpty) {
+      oneShot = true
+      runOneCommand(args)
+    } else {
+      while (true) {
+        runOneCommand(System.console.readLine("> ").split("""\s+"""))
+      }
     }
   }
 }
