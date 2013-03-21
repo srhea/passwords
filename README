@@ -53,7 +53,7 @@ Installation instructions for MacPorts/Debian/Ubuntu:
      apt-get install git sbt   # Debian/Ubuntu
      port install git sbt      # MacPorts
   
-  2. Download and install this script:
+  2. Download and install this program:
 
      mkdir -p ~/src
      cd ~/src
@@ -62,10 +62,16 @@ Installation instructions for MacPorts/Debian/Ubuntu:
      sbt compile
      export PATH=$PATH:$HOME/src/passwords/bin
 
-Note:
+Notes:
 
 I wrote passwords in Scala because of the languages I know well, Scala
 produces shorter, more readable code than C++, and I trust Scala's
 cryptographic primitives more than those in Ruby.
+
+If you're using Java 7 and getting mysterious errors, you may need to download
+the "Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy
+Files". You can find those files and instructions on how to install them here:
+
+  http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
 
 Enjoy!
