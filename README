@@ -11,13 +11,12 @@ Highlights:
 The goal of this program is to be moderately more user friendly than storing
 passwords in a plain text file encrypted with GnuPG, while at the same time
 being short and simple enough that any competent programmer can convince
-themselves of its correctness in under 30 minutes. 
+themselves of its correctness in under 30 minutes.
 
 Example usage:
 
-  $ passwords 
-  Usage:
-    passwords <command> [<args>]
+  $ passwords
+  > help
   Commands:
     generate [length]
     add <url> <username>
@@ -26,25 +25,22 @@ Example usage:
     search <search string>
     merge <other file>
 
-  $ passwords generate
+  > generate
   g9mYO:=[
 
-  $ passwords add https://www.mint.com/ johndoe
+  > add https://www.mint.com/ johndoe
   No existing passwords database.
-  Enter a master password: 
-  Confirm master password: 
+  Enter a master password:
+  Confirm master password:
   Password: <copy/paste "g9mYO:=[" from above>
 
-  $ passwords search mint
-  Master password: 
+  > search mint
   https://www.mint.com/ johndoe g9mYO:=[
 
-  $ passwords remove https://www.mint.com/ johndoe
-  Master password: 
+  > remove https://www.mint.com/ johndoe
   Really remove this entry? (Y/N): y
 
-If you run passwords without any arguments, it will accept commands in a loop,
-and you will only have to type your master password once per session.
+  > quit
 
 Installation instructions for MacPorts/Debian/Ubuntu:
 
@@ -52,7 +48,7 @@ Installation instructions for MacPorts/Debian/Ubuntu:
 
      apt-get install git sbt   # Debian/Ubuntu
      port install git sbt      # MacPorts
-  
+
   2. Download and install this program:
 
      mkdir -p ~/src
