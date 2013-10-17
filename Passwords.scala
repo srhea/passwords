@@ -226,8 +226,10 @@ object Passwords {
   }
 
   def runOneCommand(args: Array[String]) {
-    if (args.length == 0)
+    if (args.length == 0) {
       usage()
+      return
+    }
     args.head match {
       case "exit" | "quit" =>
         sys.exit(0)
@@ -235,7 +237,7 @@ object Passwords {
         val length = if (args.length > 1) Integer.parseInt(args(1)) else 8
         if (length < 4) {
           println("Length must be at least 4.")
-          sys.exit(1)
+          return
         }
         println(generate(length))
       case "list" =>
@@ -244,8 +246,10 @@ object Passwords {
           println(login.url + " " + login.user)
         }
       case "search" =>
-        if (args.length < 2)
+        if (args.length < 2) {
           usage()
+          return
+        }
         val search = args(1)
         val (vault, db) = init(file, true)
         val matches = db.filter { case (login, password) => login.url.contains(search) }
@@ -255,8 +259,10 @@ object Passwords {
           println(login.url + " " + login.user + " " + password.pw)
         }
       case "add" =>
-        if (args.length < 3)
+        if (args.length < 3) {
           usage()
+          return
+        }
         val login = Login(args(1), args(2))
         val (vault, db) = init(file, false)
         if (db.contains(login))
@@ -265,28 +271,32 @@ object Passwords {
         val again = new String(System.console.readPassword("Confirm password: "))
         if (password != again) {
           println("Passwords do not match.")
-          sys.exit(1)
+          return
         }
         vault.write(db + (login -> Password(password, System.currentTimeMillis)))
       case "remove" =>
-        if (args.length < 3)
+        if (args.length < 3) {
           usage()
+          return
+        }
         val login = Login(args(1), args(2))
         val (vault, db) = init(file, true)
         if (!db.contains(login)) {
           println("No matching url and username. Try \"passwords search " + login.url + "\".")
-          sys.exit(0)
+          return
         }
         confirm("Really remove this entry? (Y/N): ")
         vault.write(db - login)
       case "merge" =>
-        if (args.length < 2)
+        if (args.length < 2) {
           usage()
+          return
+        }
         val otherFile = new File(args(1))
         val (vault, db) = init(file, true)
         val otherVault = new Vault(otherFile, vault.password)
         val otherDb = try { otherVault.read } catch {
-          case e: Exception => println("Master password in " + args(1) + " differs."); sys.exit(1)
+          case e: Exception => println("Master password in " + args(1) + " differs."); return
         }
         val onlyInDb = db.filterKeys { k => !otherDb.contains(k) }
         val onlyInOtherDb = otherDb.filterKeys { k => !db.contains(k) }
