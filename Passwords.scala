@@ -182,6 +182,7 @@ object Passwords {
     println("""|Commands:
                |  generate [length]
                |  add <url> <username>
+               |  addgen <url> <username> [length]
                |  remove <url> <username>
                |  list
                |  search <search string>
@@ -226,6 +227,7 @@ object Passwords {
   }
 
   def runOneCommand(args: Array[String]) {
+    val defaultLength = 8
     if (args.length == 0) {
       usage()
       return
@@ -234,7 +236,7 @@ object Passwords {
       case "exit" | "quit" =>
         sys.exit(0)
       case "generate" =>
-        val length = if (args.length > 1) Integer.parseInt(args(1)) else 8
+        val length = if (args.length > 1) Integer.parseInt(args(1)) else defaultLength
         if (length < 4) {
           println("Length must be at least 4.")
           return
@@ -258,7 +260,7 @@ object Passwords {
         for ((login, password) <- matches) {
           println(login.url + " " + login.user + " " + password.pw)
         }
-      case "add" =>
+      case "add" | "addgen" =>
         if (args.length < 3) {
           usage()
           return
@@ -267,11 +269,19 @@ object Passwords {
         val (vault, db) = init(file, false)
         if (db.contains(login))
           confirm("Overwrite existing entry? (Y/N): ")
-        val password = new String(System.console.readPassword("Password: "))
-        val again = new String(System.console.readPassword("Confirm password: "))
-        if (password != again) {
-          println("Passwords do not match.")
-          return
+        val password = if (args.head == "addgen") {
+          val length = if (args.length > 3) Integer.parseInt(args(3)) else defaultLength
+          val pw = generate(length)
+          println("Pasword is " + pw)
+          pw
+        } else {
+          val pw = new String(System.console.readPassword("Password: "))
+          val again = new String(System.console.readPassword("Confirm password: "))
+          if (pw != again) {
+            println("Passwords do not match.")
+            return
+          }
+          pw
         }
         vault.write(db + (login -> Password(password, System.currentTimeMillis)))
       case "remove" =>
