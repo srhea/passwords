@@ -155,13 +155,35 @@ object Passwords {
   val file = new File(System.getProperty("user.home"), ".passwords")
   lazy val masterPassword = System.console.readPassword("Master password: ")
 
+  val Lowers = "abcdefghijklmnopqrstuvwxyz"
+  val Uppers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  val Digits = "0123456789"
+  val Symbols = """`-=[]\;',./~!@#$%^&*()_+{}|:"<>?"""
+  val Groups = Array(Lowers, Uppers, Digits, Symbols)
+  val All = Groups.mkString("")
+
+  def possiblePasswords(length: Int): Double = {
+    val all = math.pow(All.length, length)
+    val noU = math.pow(All.length - Uppers.length, length)
+    val noL = math.pow(All.length - Lowers.length, length)
+    val noD = math.pow(All.length - Digits.length, length)
+    val noS = math.pow(All.length - Symbols.length, length)
+    val noUnoL = math.pow(Digits.length + Symbols.length, length)
+    val noUnoD = math.pow(Lowers.length + Symbols.length, length)
+    val noUnoS = math.pow(Lowers.length + Digits.length, length)
+    val noLnoD = math.pow(Uppers.length + Symbols.length, length)
+    val noLnoS = math.pow(Uppers.length + Digits.length, length)
+    val noDnoS = math.pow(Uppers.length + Lowers.length, length)
+    val U = math.pow(Uppers.length, length)
+    val L = math.pow(Uppers.length, length)
+    val D = math.pow(Uppers.length, length)
+    val S = math.pow(Uppers.length, length)
+    all - (noU + noL + noD + noS
+           - noUnoL - noUnoD - noUnoS - noLnoD - noLnoS - noDnoS
+           + U + L + D + S)
+  }
+
   def generate(length: Int): String = {
-    val Lowers = "abcdefghijklmnopqrstuvwxyz"
-    val Uppers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    val Digits = "0123456789"
-    val Symbols = """`-=[]\;',./~!@#$%^&*()_+{}|:"<>?"""
-    val Groups = Array(Lowers, Uppers, Digits, Symbols)
-    val All = Groups.mkString("")
     val rand = new SecureRandom
     for (attempt <- (1 to 100)) {
       val result = (1 to length).map { i => All(rand.nextInt(All.length)) }.mkString("")
@@ -180,6 +202,7 @@ object Passwords {
                  |  passwords <command> [<args>]""".stripMargin)
     }
     println("""|Commands:
+               |  strength [length]
                |  generate [length]
                |  add <url> <username>
                |  addgen <url> <username> [length]
@@ -235,13 +258,19 @@ object Passwords {
     args.head match {
       case "exit" | "quit" =>
         sys.exit(0)
-      case "generate" =>
+      case "generate" | "strength" =>
         val length = if (args.length > 1) Integer.parseInt(args(1)) else defaultLength
         if (length < 4) {
           println("Length must be at least 4.")
           return
         }
-        println(generate(length))
+        if (args.head == "generate") {
+          println(generate(length))
+        } else {
+          val choices = possiblePasswords(length)
+          val bits = (Math.log(choices) / Math.log(2)).floor.toInt
+          println(bits + " bits of entropy")
+        }
       case "list" =>
         val (vault, db) = init(file, true)
         for ((login, password) <- SortedMap(db.toSeq: _*)) {
