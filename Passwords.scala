@@ -158,7 +158,7 @@ object Passwords {
   val Lowers = "abcdefghijklmnopqrstuvwxyz"
   val Uppers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
   val Digits = "0123456789"
-  val Symbols = """`-=[]\;',./~!@#$%^&*()_+{}|:"<>?"""
+  val Symbols = "_"
   val Groups = Array(Lowers, Uppers, Digits, Symbols)
   val All = Groups.mkString("")
 
@@ -250,7 +250,7 @@ object Passwords {
   }
 
   def runOneCommand(args: Array[String]) {
-    val defaultLength = 8
+    val defaultLength = 10
     if (args.length == 0) {
       usage()
       return
