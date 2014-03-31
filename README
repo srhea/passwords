@@ -70,4 +70,10 @@ Files". You can find those files and instructions on how to install them here:
 
   http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
 
+On Mac OSX, JAVA_HOME is a little wierd.  To install the unlimited strength
+cryptography extensions on OSX, unzip the file downloaded from the link above,
+cd into the unzipped directory, and then run this command
+
+  sudo mv *.jar `/usr/libexec/java_home`/jre/lib/security/
+
 Enjoy!
